@@ -2,6 +2,8 @@ package cn.edu.tjpu.dao;
 
 import cn.edu.tjpu.model.Teacher;
 
+import java.util.List;
+
 /**
  * @ClassName: TeacherDao
  * @Description: TODO
@@ -10,4 +12,6 @@ import cn.edu.tjpu.model.Teacher;
  **/
 public interface TeacherDao {
     public Teacher getTeacherByNumber(Teacher teacher);
+
+    public void batchAddTeacher(List<Teacher> teachers);
 }

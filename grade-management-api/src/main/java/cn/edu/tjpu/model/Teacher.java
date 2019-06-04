@@ -1,17 +1,18 @@
 package cn.edu.tjpu.model;
 
-public class Teacher {
-    private int id;
+import java.io.Serializable;
+
+public class Teacher implements Serializable {
+    private Long id;
     private String number;
     private String password;
     private String name;
-    private Integer sex;
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -39,11 +40,4 @@ public class Teacher {
         this.name = name;
     }
 
-    public Integer getSex() {
-        return sex;
-    }
-
-    public void setSex(Integer sex) {
-        this.sex = sex;
-    }
 }

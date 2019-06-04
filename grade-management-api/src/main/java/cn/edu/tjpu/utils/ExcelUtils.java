@@ -99,9 +99,14 @@ public class ExcelUtils {
             }
             if (POIFSFileSystem.hasPOIFSHeader(inputStream)) {// 判断是否为2003
                 workbook = new HSSFWorkbook(inputStream);
+                return workbook.getSheetAt(pageAt);
             }
             if (POIXMLDocument.hasOOXMLHeader(inputStream)) {// 判断是否为2007
                 workbook = new XSSFWorkbook(OPCPackage.open(inputStream));
+                return workbook.getSheetAt(pageAt);
+            }
+            if(workbook == null){
+                return null;
             }
             return workbook.getSheetAt(pageAt);
         } catch (InvalidFormatException | IOException e) {

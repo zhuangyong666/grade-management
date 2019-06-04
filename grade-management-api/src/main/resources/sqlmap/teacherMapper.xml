@@ -4,4 +4,13 @@
     <select id="getTeacherByNumber" parameterType="teacher" resultType="teacher">
       select * from teacher where number=#{number} and name=#{name}
     </select>
+    <insert id="batchAddTeacher" parameterType="list" useGeneratedKeys="true" keyProperty="id">
+        INSERT ALL
+        <foreach collection="list" item="teacher" index="index" separator=" ">
+            INTO
+            teacher(number,NAME)
+            VALUES(#{teacher.number},#{teacher.name})
+        </foreach>
+        SELECT 1 FROM DUAL
+    </insert>
 </mapper>

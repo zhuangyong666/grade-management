@@ -1,8 +1,9 @@
 package cn.edu.tjpu.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Menu {
+public class Menu implements Serializable {
 	private String icon;
 	private String index;
 	private String title;

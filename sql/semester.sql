@@ -1,0 +1,1 @@
+INSERT INTO `semester` VALUES (4, '2018-2019-1');
