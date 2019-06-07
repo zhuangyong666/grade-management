@@ -14,4 +14,8 @@ public interface TeacherDao {
     public Teacher getTeacherByNumber(Teacher teacher);
 
     public void batchAddTeacher(List<Teacher> teachers);
+
+    public List<Teacher> getTeachersByNumbers(List<String> numbers);
+
+    public void batchUpdateTeacher(List<Teacher> teachers);
 }

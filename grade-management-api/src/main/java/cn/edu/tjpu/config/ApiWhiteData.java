@@ -11,7 +11,6 @@ public class ApiWhiteData {
 	private static List<String> whiteApis = new ArrayList<String>();
 	static {
 		whiteApis.add("/teacher/login");
-		whiteApis.add("/file/upload");
 	}
 	public static List<String> getWhiteApis() {
 		return whiteApis;

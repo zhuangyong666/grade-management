@@ -14,6 +14,15 @@ public class ExperimentalScore implements Serializable {
     private String studentId;
     private Long courseId;
     private Long semesterId;
+    private Long experimentId;
+
+    public Long getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(Long experimentId) {
+        this.experimentId = experimentId;
+    }
 
     public Long getId() {
         return id;

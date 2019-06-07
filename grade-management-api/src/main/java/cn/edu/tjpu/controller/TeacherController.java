@@ -9,10 +9,7 @@ import cn.edu.tjpu.utils.JWTUtils;
 import cn.edu.tjpu.utils.MenuUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,7 +38,7 @@ public class TeacherController extends BaseController {
         }
         Teacher dbTeacher = teacherService.getTeacherByNumber(teacher);
         if (dbTeacher != null) {
-            if (dbTeacher.getNumber().equals("admin")) {
+            if (dbTeacher.getName().equals("admin")) {
                 Map<String, Object> result = new HashMap<>();
                 result.put("token", JWTUtils.getToken(dbTeacher.getNumber()));
                 result.put("meuns", MenuUtils.grantAdminToUser());

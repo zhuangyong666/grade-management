@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tjpu.dao.TeacherExtendDao">
+    <select id="getTeacherExtends" resultType="teacherExtend">
+        select * from teacher_extend where teacherId in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        and clazzId=#{clazzId}
+        and courseId=#{courseId}
+        and semesterId=#{semesterId}
+    </select>
+    <!-- 批量插入 -->
+    <insert id ="batchAddTeacherExtend" parameterType="list" >
+        insert into teacher_extend
+        (semesterId,courseId,clazzId,teacherId)
+        values
+        <foreach collection ="list" item="teacherExtend" index= "index" separator =",">
+            (#{teacherExtend.semesterId},#{teacherExtend.courseId},#{teacherExtend.clazzId},#{teacherExtend.teacherId})
+        </foreach >
+    </insert >
+</mapper>

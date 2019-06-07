@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tjpu.dao.StudentDao">
+    <select id="getStudentByNumbers" resultType="student">
+        select * from student where number in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!-- 批量插入 -->
+    <insert id ="batchAddStudent" parameterType="list" >
+        insert into student
+        (id,number,name,sex,clazzId)
+        values
+        <foreach collection ="list" item="student" index= "index" separator =",">
+            (#{student.id},#{student.number},#{student.name},#{student.sex},#{student.clazzId})
+        </foreach >
+    </insert >
+    <!--批量更新 -->
+    <update id="batchUpdateStudent" parameterType="list">
+        <foreach close=";" collection="list" index="index" item="item" open="" separator=";">
+            update student
+            <trim prefix="set" suffixOverrides=",">
+                name=#{item.name},sex=#{item.sex},clazzId=#{item.clazzId}
+            </trim>
+            <where>id = #{item.id}</where>
+        </foreach>
+    </update>
+</mapper>

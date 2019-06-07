@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tjpu.dao.ExperimentalScoreDao">
+    <select id="getExperimentalScore" resultType="experimentalScore">
+        select * from experimental_score where studentId =#{studentId}
+         and courseId=#{courseId} and semesterId=#{semesterId} and experimentId in
+        <foreach collection="experimentIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!-- 批量插入 -->
+    <insert id="batchAddExperimentalScore" parameterType="list">
+        insert into experimental_score
+        (score,studentId,courseId,semesterId,experimentId)
+        values
+        <foreach collection="list" item="experimentalScore" index="index" separator=",">
+            (#{experimentalScore.score},#{experimentalScore.studentId},#{experimentalScore.courseId},#{experimentalScore.semesterId},#{experimentalScore.experimentId})
+        </foreach>
+    </insert>
+    <!--批量更新 -->
+    <update id="batchUpdateExperimentalScore" parameterType="list">
+        <foreach close=";" collection="list" index="index" item="item" open="" separator=";">
+            update experimental_score
+            <trim prefix="set" suffixOverrides=",">
+                score=#{item.score}
+            </trim>
+            <where>id = #{item.id}</where>
+        </foreach>
+    </update>
+</mapper>

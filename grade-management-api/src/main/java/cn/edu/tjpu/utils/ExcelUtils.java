@@ -123,7 +123,7 @@ public class ExcelUtils {
                 case Cell.CELL_TYPE_BOOLEAN:
                     return String.valueOf(cell.getBooleanCellValue());
                 case Cell.CELL_TYPE_NUMERIC:
-                    return String.valueOf(cell.getNumericCellValue());
+                    return String.valueOf((long)cell.getNumericCellValue());
                 default:
                     return String.valueOf(cell.getStringCellValue());
             }

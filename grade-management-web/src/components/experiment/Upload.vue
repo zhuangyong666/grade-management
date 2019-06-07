@@ -11,6 +11,7 @@
 <el-upload
   class="upload-demo"
   :action="uploadUrl"
+  :headers="headers"
   name="file"
   :before-upload="beforeAvatarUpload"
   :file-list="fileList"
@@ -26,7 +27,8 @@
   export default {
     data() {
       return {
-        fileList: []
+        fileList: [],
+        headers:{"Authorization":sessionStorage.getItem("token")}
       };
     },
     computed:{
@@ -47,8 +49,9 @@
       },
       onSuccess(response){
         if(response.status){
-
+          
         }else{
+          this.fileList;
           this.$message.error(response.message);
         }
       }

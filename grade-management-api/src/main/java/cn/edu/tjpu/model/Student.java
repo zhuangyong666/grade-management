@@ -1,6 +1,7 @@
 package cn.edu.tjpu.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName: Student
@@ -14,6 +15,7 @@ public class Student implements Serializable {
     private String name;
     private Integer sex;
     private Long clazzId;
+    private List<ExperimentalScore> experimentalScores;
 
     public String getId() {
         return id;
@@ -53,5 +55,13 @@ public class Student implements Serializable {
 
     public void setClazzId(Long clazzId) {
         this.clazzId = clazzId;
+    }
+
+    public List<ExperimentalScore> getExperimentalScores() {
+        return experimentalScores;
+    }
+
+    public void setExperimentalScores(List<ExperimentalScore> experimentalScores) {
+        this.experimentalScores = experimentalScores;
     }
 }

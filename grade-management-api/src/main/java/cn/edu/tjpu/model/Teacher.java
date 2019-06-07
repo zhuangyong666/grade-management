@@ -3,16 +3,16 @@ package cn.edu.tjpu.model;
 import java.io.Serializable;
 
 public class Teacher implements Serializable {
-    private Long id;
+    private String id;
     private String number;
     private String password;
     private String name;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

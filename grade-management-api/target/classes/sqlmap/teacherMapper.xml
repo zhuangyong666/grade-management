@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="cn.edu.tjpu.dao.TeacherDao">
+    <select id="getTeachersByNumbers" resultType="teacher" parameterType="list">
+        select * from teacher where number in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <!-- 批量插入 -->
+    <insert id="batchAddTeacher" parameterType="list">
+        insert into teacher
+        (id,number,NAME)
+        values
+        <foreach collection="list" item="teacher" index="index" separator=",">
+            (#{teacher.id},#{teacher.number},#{teacher.name})
+        </foreach>
+    </insert>
+    <!--批量更新 -->
+    <update id="batchUpdateTeacher" parameterType="list">
+        <foreach collection="list" item="item" index="index" separator=";">
+            update teacher
+            set
+            name=#{item.name}
+            where id=#{item.id}
+        </foreach>
+    </update>
     <select id="getTeacherByNumber" parameterType="teacher" resultType="teacher">
       select * from teacher where number=#{number} and name=#{name}
     </select>
-    <insert id="batchAddTeacher" parameterType="list" useGeneratedKeys="true" keyProperty="id">
-        INSERT ALL
-        <foreach collection="list" item="teacher" index="index" separator=" ">
-            INTO
-            teacher(number,NAME)
-            VALUES(#{teacher.number},#{teacher.name})
-        </foreach>
-        SELECT 1 FROM DUAL
-    </insert>
 </mapper>
