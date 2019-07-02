@@ -2,6 +2,8 @@ package cn.edu.tjpu.dao;
 
 import cn.edu.tjpu.model.Semester;
 
+import java.util.List;
+
 /**
  * @Interface: SemesterDao
  * @description:
@@ -12,4 +14,6 @@ public interface SemesterDao {
     public void addSemester(Semester semester);
 
     public Semester getSemesterByNumber(Semester semester);
+
+    public List<Semester> getAllSemester();
 }

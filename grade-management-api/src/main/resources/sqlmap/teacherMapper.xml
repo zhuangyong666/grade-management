@@ -28,4 +28,26 @@
     <select id="getTeacherByNumber" parameterType="teacher" resultType="teacher">
       select * from teacher where number=#{number} and name=#{name}
     </select>
+    <select id="getTeacherByPage" parameterType="teacher" resultType="teacher">
+        select * from teacher
+        where number <![CDATA[<>]]>'admin'
+        <if test="number!=null and number!=''">
+            and number=#{number}
+        </if>
+        <if test="name!=null and name!=''">
+            and name=#{name}
+        </if>
+        order by number
+    </select>
+    <update id="updateTeacherById" parameterType="teacher">
+        update teacher set name=#{name}
+        where id=#{id}
+    </update>
+    <delete id="deleteTeacherById">
+        delete from teacher where id=#{id};
+        delete from teacher_extend where teacherId=#{id}
+    </delete>
+    <insert id="addTeacher" parameterType="teacher">
+        insert into teacher(id,number,name) values(#{id},#{number},#{name})
+    </insert>
 </mapper>

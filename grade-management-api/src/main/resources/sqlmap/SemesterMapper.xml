@@ -7,4 +7,7 @@
     <select id="getSemesterByNumber" parameterType="semester" resultType="semester">
         select * from semester where number=#{number}
     </select>
+    <select id="getAllSemester" resultType="semester">
+        select * from semester
+    </select>
 </mapper>

@@ -1,8 +1,10 @@
 package cn.edu.tjpu.dao;
 
+import cn.edu.tjpu.base.QueryParams;
 import cn.edu.tjpu.model.Student;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Interface: StudentDao
@@ -16,4 +18,14 @@ public interface StudentDao {
     public List<Student> getStudentByNumbers(List<String> numbers);
 
     public void batchUpdateStudent(List<Student> students);
+
+    public List<Map> findStudentByPage(QueryParams queryParams);
+
+    public void updateStudentById(Student student);
+
+    public void deleteStudentById(Student student);
+
+    public List<Map> getStudentScore(QueryParams queryParams);
+
+    public void addStudent(QueryParams queryParams);
 }

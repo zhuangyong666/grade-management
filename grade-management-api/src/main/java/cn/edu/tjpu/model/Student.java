@@ -13,7 +13,7 @@ public class Student implements Serializable {
     private String id;
     private String number;
     private String name;
-    private Integer sex;
+    private String sex;
     private Long clazzId;
     private List<ExperimentalScore> experimentalScores;
 
@@ -41,11 +41,11 @@ public class Student implements Serializable {
         this.name = name;
     }
 
-    public Integer getSex() {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(Integer sex) {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 

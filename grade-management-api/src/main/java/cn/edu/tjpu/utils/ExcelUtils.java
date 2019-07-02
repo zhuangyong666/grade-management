@@ -105,7 +105,7 @@ public class ExcelUtils {
                 workbook = new XSSFWorkbook(OPCPackage.open(inputStream));
                 return workbook.getSheetAt(pageAt);
             }
-            if(workbook == null){
+            if (workbook == null) {
                 return null;
             }
             return workbook.getSheetAt(pageAt);
@@ -123,13 +123,19 @@ public class ExcelUtils {
                 case Cell.CELL_TYPE_BOOLEAN:
                     return String.valueOf(cell.getBooleanCellValue());
                 case Cell.CELL_TYPE_NUMERIC:
-                    return String.valueOf((long)cell.getNumericCellValue());
+                    return String.valueOf((long) cell.getNumericCellValue());
                 default:
                     return String.valueOf(cell.getStringCellValue());
             }
         } else {
             return null;
         }
+    }
+
+    public static Cell getCellByEN(Row row, String word) {
+        char c = word.toCharArray()[0];
+        int index = (int) c - 65;
+        return row.getCell(index);
     }
 
     public void createSheet() {

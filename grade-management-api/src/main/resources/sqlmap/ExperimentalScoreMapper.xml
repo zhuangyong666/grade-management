@@ -3,18 +3,15 @@
 <mapper namespace="cn.edu.tjpu.dao.ExperimentalScoreDao">
     <select id="getExperimentalScore" resultType="experimentalScore">
         select * from experimental_score where studentId =#{studentId}
-         and courseId=#{courseId} and semesterId=#{semesterId} and experimentId in
-        <foreach collection="experimentIds" index="index" item="item" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+         and courseId=#{courseId} and semesterId=#{semesterId}
     </select>
     <!-- 批量插入 -->
     <insert id="batchAddExperimentalScore" parameterType="list">
         insert into experimental_score
-        (score,studentId,courseId,semesterId,experimentId)
+        (score,studentId,courseId,semesterId,usuallyScoreLevelId,exScoreLevelId)
         values
         <foreach collection="list" item="experimentalScore" index="index" separator=",">
-            (#{experimentalScore.score},#{experimentalScore.studentId},#{experimentalScore.courseId},#{experimentalScore.semesterId},#{experimentalScore.experimentId})
+            (#{experimentalScore.score},#{experimentalScore.studentId},#{experimentalScore.courseId},#{experimentalScore.semesterId},#{experimentalScore.usuallyScoreLevelId},#{experimentalScore.exScoreLevelId})
         </foreach>
     </insert>
     <!--批量更新 -->
@@ -22,9 +19,25 @@
         <foreach close=";" collection="list" index="index" item="item" open="" separator=";">
             update experimental_score
             <trim prefix="set" suffixOverrides=",">
-                score=#{item.score}
+                score=#{item.score},usuallyScoreLevelId=#{item.usuallyScoreLevelId},exScoreLevelId=#{item.exScoreLevelId}
             </trim>
             <where>id = #{item.id}</where>
         </foreach>
     </update>
+    <select id="getExperimentScoreById" parameterType="cn.edu.tjpu.base.QueryParams" resultType="string">
+      select score from experimental_score where id=#{scoreId}
+    </select>
+    <update id="updateExperimentById" parameterType="cn.edu.tjpu.base.QueryParams">
+        update experimental_score set score=#{score} where id=#{scoreId}
+    </update>
+    <select id="getExperimentScore" resultType="experimentalScore" parameterType="cn.edu.tjpu.base.QueryParams">
+        SELECT DISTINCT
+            t.*
+        FROM
+            experimental_score t
+        LEFT JOIN score_level s ON t.usuallyScoreLevelId = s.id
+        LEFT JOIN semester r ON t.semesterId = r.id
+          where t.courseId=#{courseId} and r.number = #{semesterNumber} and s.clazzId=#{clazzId}
+          limit 1,1
+    </select>
 </mapper>

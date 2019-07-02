@@ -14,14 +14,23 @@ public class ExperimentalScore implements Serializable {
     private String studentId;
     private Long courseId;
     private Long semesterId;
-    private Long experimentId;
+    private String usuallyScoreLevelId;
+    private String exScoreLevelId;
 
-    public Long getExperimentId() {
-        return experimentId;
+    public String getUsuallyScoreLevelId() {
+        return usuallyScoreLevelId;
     }
 
-    public void setExperimentId(Long experimentId) {
-        this.experimentId = experimentId;
+    public void setUsuallyScoreLevelId(String usuallyScoreLevelId) {
+        this.usuallyScoreLevelId = usuallyScoreLevelId;
+    }
+
+    public String getExScoreLevelId() {
+        return exScoreLevelId;
+    }
+
+    public void setExScoreLevelId(String exScoreLevelId) {
+        this.exScoreLevelId = exScoreLevelId;
     }
 
     public Long getId() {

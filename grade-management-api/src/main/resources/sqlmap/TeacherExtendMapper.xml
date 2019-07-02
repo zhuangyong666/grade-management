@@ -9,14 +9,26 @@
         and clazzId=#{clazzId}
         and courseId=#{courseId}
         and semesterId=#{semesterId}
+        and experimentId in
+        <foreach collection="experimentIds" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
     <!-- 批量插入 -->
     <insert id ="batchAddTeacherExtend" parameterType="list" >
         insert into teacher_extend
-        (semesterId,courseId,clazzId,teacherId)
+        (semesterId,courseId,clazzId,teacherId,experimentId)
         values
         <foreach collection ="list" item="teacherExtend" index= "index" separator =",">
-            (#{teacherExtend.semesterId},#{teacherExtend.courseId},#{teacherExtend.clazzId},#{teacherExtend.teacherId})
+            <foreach collection="teacherExtend.experimentIds" item="experimentId" separator =",">
+                (#{teacherExtend.semesterId},#{teacherExtend.courseId},#{teacherExtend.clazzId},#{teacherExtend.teacherId},#{experimentId})
+            </foreach>
         </foreach >
     </insert >
+    <select id="getExperimentByTeacherId" parameterType="teacherExtend" resultType="map">
+        SELECT t.* from teacher_extend s LEFT JOIN experiment t on s.experimentId = t.id
+        WHERE 1=1
+        and teacherId=#{teacherId}
+        and courseId=#{courseId}
+    </select>
 </mapper>

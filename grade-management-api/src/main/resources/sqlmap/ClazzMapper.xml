@@ -7,4 +7,24 @@
     <select id="getClazzByName" parameterType="clazz" resultType="clazz">
         select * from clazz where name=#{name}
     </select>
+    <select id="getAllClazz" resultType="clazz">
+        select * from clazz
+    </select>
+    <select id="getClazzByTeacherId" parameterType="cn.edu.tjpu.base.QueryParams" resultType="clazz">
+        select distinct t.* from teacher_extend s left join  clazz t on s.clazzId = t.id left join semester r on s.semesterId = r.id
+        left join experiment a on s.experimentId = a.id
+        where 1=1
+        <if test="teacherId!='admin'">
+            and s.teacherId = #{teacherId}
+        </if>
+        <if test="semesterNumber!=null and semesterNumber!=''">
+            and r.number = #{semesterNumber}
+        </if>
+        <if test="courseId!=null and courseId!=''">
+            and s.courseId = #{courseId}
+        </if>
+        <if test="experimentId!=null and experimentId!=''">
+            and s.experimentId = #{experimentId}
+        </if>
+    </select>
 </mapper>

@@ -18,4 +18,12 @@ public interface TeacherDao {
     public List<Teacher> getTeachersByNumbers(List<String> numbers);
 
     public void batchUpdateTeacher(List<Teacher> teachers);
+
+    public List<Teacher> getTeacherByPage(Teacher teacher);
+
+    public void updateTeacherById(Teacher teacher);
+
+    public void deleteTeacherById(Teacher teacher);
+
+    public void addTeacher(Teacher teacher);
 }

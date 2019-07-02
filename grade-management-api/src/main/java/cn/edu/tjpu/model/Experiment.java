@@ -9,14 +9,14 @@ import java.io.Serializable;
  * @Date: 2019-06-04 13:34
  **/
 public class Experiment implements Serializable {
-    private Long id;
+    private String id;
     private String name;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

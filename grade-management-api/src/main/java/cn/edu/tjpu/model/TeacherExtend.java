@@ -1,6 +1,7 @@
 package cn.edu.tjpu.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @ClassName: TeacherExtend
@@ -14,6 +15,24 @@ public class TeacherExtend implements Serializable {
     private Long courseId;
     private Long clazzId;
     private String teacherId;
+    private List<String> experimentIds;
+    private String experimentId;
+
+    public String getExperimentId() {
+        return experimentId;
+    }
+
+    public void setExperimentId(String experimentId) {
+        this.experimentId = experimentId;
+    }
+
+    public List<String> getExperimentIds() {
+        return experimentIds;
+    }
+
+    public void setExperimentIds(List<String> experimentIds) {
+        this.experimentIds = experimentIds;
+    }
 
     public Long getId() {
         return id;

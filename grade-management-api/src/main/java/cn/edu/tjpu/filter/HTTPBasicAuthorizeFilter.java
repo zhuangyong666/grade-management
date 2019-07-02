@@ -43,7 +43,7 @@ public class HTTPBasicAuthorizeFilter implements Filter {
         String auth = httpRequest.getHeader("Authorization");
         //白名单，放过
 		System.out.println(httpRequest.getRequestURI().toString());
-        if (ApiWhiteData.getWhiteApis().contains(httpRequest.getRequestURI())) {
+        if (ApiWhiteData.getWhiteApis().contains(httpRequest.getRequestURI())|| httpRequest.getRequestURI().contains("file/download")|| httpRequest.getRequestURI().contains(".js") ||httpRequest.getRequestURI().contains(".css")) {
         	chain.doFilter(httpRequest, response);
         	return;
 		}

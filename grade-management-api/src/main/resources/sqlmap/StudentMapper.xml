@@ -8,14 +8,14 @@
         </foreach>
     </select>
     <!-- 批量插入 -->
-    <insert id ="batchAddStudent" parameterType="list" >
+    <insert id="batchAddStudent" parameterType="list">
         insert into student
         (id,number,name,sex,clazzId)
         values
-        <foreach collection ="list" item="student" index= "index" separator =",">
+        <foreach collection="list" item="student" index="index" separator=",">
             (#{student.id},#{student.number},#{student.name},#{student.sex},#{student.clazzId})
-        </foreach >
-    </insert >
+        </foreach>
+    </insert>
     <!--批量更新 -->
     <update id="batchUpdateStudent" parameterType="list">
         <foreach close=";" collection="list" index="index" item="item" open="" separator=";">
@@ -26,4 +26,88 @@
             <where>id = #{item.id}</where>
         </foreach>
     </update>
+    <select id="findStudentByPage" parameterType="cn.edu.tjpu.base.QueryParams" resultType="map">
+        SELECT
+        t.id,
+        t.number,
+        t.name,
+        t.sex,
+        s.name as clazzName,
+        t.clazzId
+        FROM
+        student t
+        LEFT JOIN clazz s ON t.clazzId = s.id
+        <where>
+            <if test="clazzName!=null and clazzName!=''">
+                s. NAME = #{clazzName}
+            </if>
+            <if test="name!=null and name!=''">
+                and t.name=#{name}
+            </if>
+            <if test="number!=null and number!=''">
+                and t.number=#{number}
+            </if>
+        </where>
+        order by t.number
+    </select>
+    <update id="updateStudentById" parameterType="student">
+        update student set name=#{name},sex=#{sex},clazzId=#{clazzId}
+        where id=#{id}
+    </update>
+    <delete id="deleteStudentById" parameterType="student">
+        delete from student where id=#{id};
+        delete from experimental_score where studentId=#{id}
+    </delete>
+    <select id="getStudentScore" parameterType="cn.edu.tjpu.base.QueryParams" resultType="map">
+        SELECT
+            t.id,
+            t.number,
+            t. name,
+            t.sex,
+            s. NAME clazzName,
+            r.id scoreId,
+            r.score,
+            b.number semesterNumber,
+            c. NAME courseName,
+            a.`level` uLevel,
+            a.formula uFormula,
+            (
+                SELECT
+                    `level`
+                FROM
+                    score_level
+                WHERE
+                    id = r.exScoreLevelId
+            ) eLevel,
+            (
+                SELECT
+                    formula
+                FROM
+                    score_level
+                WHERE
+                    id = r.exScoreLevelId
+            ) eFormula
+        FROM
+            student t
+        LEFT JOIN clazz s ON t.clazzId = s.id
+        LEFT JOIN experimental_score r ON t.id = r.studentId
+        LEFT JOIN semester b ON r.semesterId = b.id
+        LEFT JOIN course c ON r.courseId = c.id
+        LEFT JOIN score_level a ON r.usuallyScoreLevelId = a.id
+        where 1=1
+        <if test="courseId!=null and courseId!=''">
+           and c.id=#{courseId}
+        </if>
+        <if test="clazzId!=null and clazzId!=''">
+            and s.id=#{clazzId}
+        </if>
+        <if test="semesterId!=null and semesterId!=''">
+            and b.number=#{semesterId}
+        </if>
+        order by t.number
+    </select>
+    <insert id="addStudent" parameterType="cn.edu.tjpu.base.QueryParams">
+      insert into student values(#{id},#{number},#{name},#{sex},#{clazzId});
+      insert into experimental_score(score,studentId,courseId,semesterId,usuallyScoreLevelId,exScoreLevelId) values(#{score},#{studentId},#{courseId},#{semesterId},#{usuallyScoreLevelId},#{exScoreLevelId})
+    </insert>
 </mapper>

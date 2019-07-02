@@ -1,6 +1,9 @@
 package cn.edu.tjpu.dao;
 
+import cn.edu.tjpu.base.QueryParams;
 import cn.edu.tjpu.model.Course;
+
+import java.util.List;
 
 /**
  * @Interface: CourseDao
@@ -12,4 +15,8 @@ public interface CourseDao {
     public void addCourse(Course course);
 
     public Course getCourseByName(Course course);
+
+    public List<Course> getCoursesByTeacherId(QueryParams queryParams);
+
+    public List<Course> getAllCourse();
 }

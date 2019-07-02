@@ -29,6 +29,15 @@ export default new Router({
         {
           path: '/upload',
           component: resolve => require(['../components/experiment/Upload.vue'], resolve)
+        },{
+          path: '/students',
+          component: resolve => require(['../components/student/Students.vue'], resolve)
+        },{
+          path: '/courses',
+          component: resolve => require(['../components/course/Courses.vue'], resolve)
+        },{
+          path: '/scoreLevel',
+          component: resolve => require(['../components/scoreLevel/ScoreLevel.vue'], resolve)
         }
       ]
     }

@@ -1,17 +1,26 @@
 package cn.edu.tjpu.controller;
 
 import cn.edu.tjpu.base.BaseController;
+import cn.edu.tjpu.base.Page;
 import cn.edu.tjpu.base.ResponseCode;
 import cn.edu.tjpu.base.ResponseData;
 import cn.edu.tjpu.model.Teacher;
+import cn.edu.tjpu.model.TeacherExtend;
+import cn.edu.tjpu.service.TeacherExtendService;
 import cn.edu.tjpu.service.TeacherService;
 import cn.edu.tjpu.utils.JWTUtils;
 import cn.edu.tjpu.utils.MenuUtils;
+import cn.edu.tjpu.utils.RandomGUID;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,8 +32,11 @@ import java.util.Map;
 @RequestMapping("teacher")
 @RestController
 public class TeacherController extends BaseController {
+    private final static Log LOG = LogFactory.getLog(TeacherController.class);
     @Autowired
     private TeacherService teacherService;
+    @Autowired
+    private TeacherExtendService teacherExtendService;
 
     @PostMapping("/login")
     public ResponseData login(Teacher teacher) {
@@ -40,55 +52,65 @@ public class TeacherController extends BaseController {
         if (dbTeacher != null) {
             if (dbTeacher.getName().equals("admin")) {
                 Map<String, Object> result = new HashMap<>();
-                result.put("token", JWTUtils.getToken(dbTeacher.getNumber()));
+                result.put("token", JWTUtils.getToken(dbTeacher.getId()));
                 result.put("meuns", MenuUtils.grantAdminToUser());
-                result.put("routers", "/home_/teachers_/upload");
+                result.put("routers", "/home_/teachers_/upload_/students_/courses_/scoreLevel");
                 return ResponseData.ok(result);
             } else {
                 Map<String, Object> result = new HashMap<>();
-                result.put("token", JWTUtils.getToken(dbTeacher.getNumber()));
-                result.put("meuns", MenuUtils.grantUserToUser());
-                result.put("routers", "/home");
+                result.put("token", JWTUtils.getToken(dbTeacher.getId()));
+                result.put("meuns", MenuUtils.grantAdminToUser());
+                result.put("routers", "/home_/teachers_/upload_/students_/courses_/scoreLevel");
+                LOG.error("------------" + result.get("token"));
                 return ResponseData.ok(result);
             }
         }
-        return ResponseData.fail("账号或者密码错误");
+        return ResponseData.fail("账号或者密码错误", 400);
     }
 
-    @GetMapping("/list")
-    public ResponseData queryUsers(String name, String address, Integer page, Integer pageSize) {
-        /*if (page == null) {
-            page = 1;
-        }
-        if (pageSize == null) {
-            pageSize = 10;
-        }
-        List<Teacher> users = new ArrayList<Teacher>();
-        if (page == 1) {
-            for (int i = 1; i < 11; i++) {
-                users.add(new Teacher(i, "王小虎" + i, "上海市普陀区金沙江路 1518 弄", "2016-05-02"));
-            }
-        }
-        if (page == 2) {
-            for (int i = 11; i < 20; i++) {
-                users.add(new Teacher(i, "王小虎" + i, "上海市普陀区金沙江路 1518 弄", "2016-05-02"));
-            }
-        }
-        if (!address.equals("")) {
-            users = new ArrayList<Teacher>();
-            users.add(new Teacher(111, "王小虎111", "上海市普陀区金沙江路 1518 弄", "2016-05-02"));
-        }
-        Map<String, Object> result = new HashMap<>();
-        result.put("list", users);
-        result.put("currentPage", page);
-        result.put("total", 19);
-        result.put("pageSize", pageSize);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }*/
+    @PostMapping("/list")
+    public ResponseData queryUsers(@Valid @RequestBody Page<Teacher> page) {
+        return ResponseData.ok(teacherService.getTeacherByPage(page));
+    }
+
+    @PostMapping("update")
+    public ResponseData updateTeacher(@RequestBody Teacher teacher) {
+        teacherService.updateTeacherById(teacher);
         return ResponseData.ok("");
     }
+
+    @PostMapping("delete")
+    public ResponseData deleteTeacher(@RequestBody Teacher teacher) {
+        teacherService.deleteTeacherById(teacher);
+        return ResponseData.ok("");
+    }
+
+    @PostMapping("add")
+    public ResponseData addTeacher(@RequestBody Teacher teacher) {
+        List<String> numbers = new ArrayList<>();
+        numbers.add(teacher.getNumber());
+        List<Teacher> resultList = teacherService.getTeachersByNumbers(numbers);
+        if (resultList.size() != 0) {
+            return ResponseData.fail("工号已存在");
+        }
+        teacher.setId(RandomGUID.generatorGUID());
+        teacherService.addTeacher(teacher);
+        return ResponseData.ok("");
+    }
+
+    @GetMapping("getExperiment")
+    public ResponseData getExperiment(Long courseId) {
+        String auth = getAuth();
+        if (JWTUtils.checkToken(auth).isStatus()) {
+            String teacherId = JWTUtils.parser(auth);
+            System.out.println(teacherId);
+            TeacherExtend teacherExtend = new TeacherExtend();
+            teacherExtend.setTeacherId(teacherId);
+            teacherExtend.setCourseId(courseId);
+            List<Map> resuliList = teacherExtendService.getExperimentByTeacherId(teacherExtend);
+            return ResponseData.ok(resuliList);
+        }
+        return ResponseData.fail("token不正确");
+    }
+
 }

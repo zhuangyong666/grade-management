@@ -7,4 +7,17 @@
     <select id="getCourseByName" parameterType="course" resultType="course">
         select * from course where name=#{name}
     </select>
+    <select id="getCoursesByTeacherId" resultType="course" parameterType="cn.edu.tjpu.base.QueryParams">
+        select DISTINCT t.* from teacher_extend s left join course t on s.courseId = t.id left join semester r on s.semesterId = r.id
+        where 1=1
+        <if test="teacherId!=null and teacherId!='admin'">
+            and s.teacherId=#{teacherId}
+        </if>
+        <if test="semesterNumber!=null and semesterNumber!=''">
+            and r.number=#{semesterNumber}
+        </if>
+    </select>
+    <select id="getAllCourse" resultType="course">
+        select * from course
+    </select>
 </mapper>
