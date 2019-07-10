@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tjpu.dao.ExperimentalDao">
+    <insert id="batchAddExperimental" parameterType="list">
+        insert into experiment
+        (id,name)
+        values
+        <foreach collection="list" item="experiment" index="index" separator=",">
+            (#{experiment.id},#{experiment.name})
+        </foreach>
+    </insert>
+    <select id="getExperimentals" resultType="experiment">
+        select * from experiment where name in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item.name}
+        </foreach>
+    </select>
+</mapper>

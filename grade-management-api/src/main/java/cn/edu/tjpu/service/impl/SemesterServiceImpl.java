@@ -117,15 +117,29 @@ public class SemesterServiceImpl implements SemesterService {
                 teacherNumbers.add(number);
             }
 
+            String uFormula = "";
+            Row row7 = sheet.getRow(7);
+            if (row7 != null && row7.getCell(1) != null) {
+                uFormula = excelUtils.getValue(row7.getCell(1));
+            }
+            String eFormula = "";
+            Row row6 = sheet.getRow(6);
+            if (row6 != null && row6.getCell(1) != null) {
+                eFormula = excelUtils.getValue(row6.getCell(1));
+            }
             List<Experiment> experiments = new LinkedList<>();
             List<String> experimentIds = new LinkedList<>();
-            for (int i = 4; excelUtils.getValue(sheet.getRow(8).getCell(i)) != null && !excelUtils.getValue(sheet.getRow(8).getCell(i)).equals("实验总成绩"); i += 2) {
-                Experiment experiment = new Experiment();
-                String experimentId = RandomGUID.generatorGUID();
-                experiment.setId(experimentId);
-                String name = excelUtils.getValue(sheet.getRow(8).getCell(i));
-                experiment.setName(name.substring(0, name.length() - 2));
-                experiments.add(experiment);
+            String startEnCell = "E";
+            for (int i = 4; excelUtils.getValue(sheet.getRow(8).getCell(i)) != null && !excelUtils.getValue(sheet.getRow(8).getCell(i)).equals("实验总成绩"); i++) {
+                if (eFormula.contains(startEnCell)) {
+                    Experiment experiment = new Experiment();
+                    String experimentId = RandomGUID.generatorGUID();
+                    experiment.setId(experimentId);
+                    String name = excelUtils.getValue(sheet.getRow(8).getCell(i));
+                    experiment.setName(name.substring(0, name.length() - 2));
+                    experiments.add(experiment);
+                }
+                startEnCell = ((char) (startEnCell.toCharArray()[0] + 1)) + "";
             }
 
             List<Experiment> dbExperiments = experimentalDao.getExperimentals(experiments);
@@ -242,7 +256,7 @@ public class SemesterServiceImpl implements SemesterService {
             }
             List<ScoreLevel> scoreLevels = new ArrayList<>();
             String uScoreLevelId = null;
-            Row row7 = sheet.getRow(7);
+
             if (row7 != null) {
                 uScoreLevelId = RandomGUID.generatorGUID();
                 ScoreLevel usScoreLevel = new ScoreLevel();
@@ -258,10 +272,7 @@ public class SemesterServiceImpl implements SemesterService {
 
             List<Student> students = new ArrayList<>();
             List<String> studentNumbers = new ArrayList<>();
-            String uFormula = "";
-            if (row7 != null && row7.getCell(1) != null) {
-                uFormula = excelUtils.getValue(row7.getCell(1));
-            }
+
             for (int i = 9; sheet.getRow(i) != null; i++) {
                 Row rowi = sheet.getRow(i);
                 String studentId = RandomGUID.generatorGUID();
@@ -297,7 +308,7 @@ public class SemesterServiceImpl implements SemesterService {
                                     score.setScore(scoreStr);
                                     score.setExperimentalFlag(0);
                                     scoreList.add(score);
-                                } else {
+                                } else if (eFormula.contains(startCell)) {
                                     if (scoreStr == null) {
                                         scoreStr = defaultEScore;
                                     }
@@ -396,27 +407,32 @@ public class SemesterServiceImpl implements SemesterService {
             String scoreJson = (String) studentInfo.get("score");
             List<Score> scoreList = JSONObject.parseArray(scoreJson, Score.class);
             String eFormula = (String) studentInfo.get("eFormula");
-            /*String uFormula = (String) studentInfo.get("uFormula");*/
+            String uFormula = (String) studentInfo.get("uFormula");
             List<String> eFormulaList = toScoreList(eFormula);
-            /*List<String> uFormulaList = toScoreList(uFormula);*/
+            List<String> uFormulaList = null;
+            if (uFormula != null) {
+                uFormulaList = toScoreList(uFormula);
+            }
             int cellNum = 4;
             int e = 0;
             int u = 0;
             for (int j = 0; j < scoreList.size(); j++) {
                 Score scoreBean = scoreList.get(j);
                 String name = scoreBean.getName();
+                Integer experimentalFlag = scoreBean.getExperimentalFlag();
                 double d = 0;
-                if (name.contains("实验成绩")) {
+                if (experimentalFlag == 1) {
                     d = Double.valueOf(eFormulaList.get(e)) * 1000 / 10;
                     e++;
                 } else {
-                    d = Double.valueOf(eFormulaList.get(u)) * 1000 / 10;
+                    d = Double.valueOf(uFormulaList.get(u)) * 1000 / 10;
                     u++;
                 }
                 excelUtils.setCell(j + 4, name + "(" + d + "%)");
                 cellNum = j + 5;
             }
-            excelUtils.setCell(cellNum, "总分");
+            excelUtils.setCell(cellNum, "实验总分");
+            excelUtils.setCell(cellNum + 1, "平时总分");
             List<ScoreLevel> eScoreLevels = JSONObject.parseArray((String) studentInfo.get("eLevel"), ScoreLevel.class);
             List<ScoreLevel> uScoreLevels = JSONObject.parseArray((String) studentInfo.get("uLevel"), ScoreLevel.class);
             Map<String, String> eScoreLevelMap = new HashMap<>();
@@ -424,8 +440,10 @@ public class SemesterServiceImpl implements SemesterService {
                 eScoreLevelMap.put(scoreLevel.getLevel(), scoreLevel.getScore());
             }
             Map<String, String> uScoreLevelMap = new HashMap<>();
-            for (ScoreLevel scoreLevel : uScoreLevels) {
-                uScoreLevelMap.put(scoreLevel.getLevel(), scoreLevel.getScore());
+            if (uScoreLevels != null) {
+                for (ScoreLevel scoreLevel : uScoreLevels) {
+                    uScoreLevelMap.put(scoreLevel.getLevel(), scoreLevel.getScore());
+                }
             }
             for (int i = 0; i < resultList.size(); i++) {
                 Map student = resultList.get(i);
@@ -440,14 +458,18 @@ public class SemesterServiceImpl implements SemesterService {
                 for (int j = 0; j < scores.size(); j++) {
                     Score score = scores.get(j);
                     String scoreStr = score.getScore();
-                    if (excelUtils.getValue(row1.getCell(j + 4)).contains("实验成绩")) {
+                    if (score.getExperimentalFlag() == 1) {
                         excelUtils.setCell(j + 4, scoreStr + (scoreStr.equals("") ? scoreStr : "(" + eScoreLevelMap.get(scoreStr) + ")"));
                     } else {
                         excelUtils.setCell(j + 4, scoreStr + (scoreStr.equals("") ? scoreStr : "(" + uScoreLevelMap.get(scoreStr) + ")"));
                     }
                     num = j + 5;
                 }
-                excelUtils.setCell(num, (Double) student.get("eTotalScore") + (Double) student.get("uTotalScore"));
+                excelUtils.setCell(num, (Double) student.get("eTotalScore"));
+                Double uTotalScore = (Double) student.get("uTotalScore");
+                if (uTotalScore != null) {
+                    excelUtils.setCell(num + 1, uTotalScore);
+                }
             }
             String fileName = studentInfo.get("semesterNumber") + studentInfo.get("courseName") + studentInfo.get("clazzName") + ".xlsx";
             String filePath = PathUtils.getWebInfoPath() + DIR + "\\";

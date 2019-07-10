@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tjpu.dao.ScoreLevelDao">
+    <update id="updateScoreLevelById" parameterType="scoreLevel">
+        update score_level set name=#{name}
+        where id=#{id}
+    </update>
+    <delete id="deleteScoreLevelById">
+        delete from score_level where id=#{id};
+    </delete>
+    <insert id="addScoreLevel" parameterType="scoreLevel">
+        insert into score_level(id,name) values(id,#{name})
+    </insert>
+    <select id="getScoreLevelByPage" resultType="scoreLevel">
+        select * from score_level
+        order by id
+    </select>
+    <!-- 批量插入 -->
+    <insert id="batchAddScoreLevel" parameterType="list">
+        insert into score_level
+        (id,name,level,formula,clazzId)
+        values
+        <foreach collection="list" item="scoreLevel" index="index" separator=",">
+            (#{scoreLevel.id},#{scoreLevel.name},#{scoreLevel.level},#{scoreLevel.formula},#{scoreLevel.clazzId})
+        </foreach>
+    </insert>
+    <select id="getById" parameterType="string" resultType="scoreLevel">
+        select * from score_level where id=#{id}
+    </select>
+</mapper>

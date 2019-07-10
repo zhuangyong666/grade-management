@@ -1,6 +1,6 @@
 package cn.edu.tjpu.dao;
 
-import cn.edu.tjpu.model.Experiment;
+import cn.edu.tjpu.base.QueryParams;
 import cn.edu.tjpu.model.TeacherExtend;
 import org.apache.ibatis.annotations.Param;
 
@@ -18,5 +18,5 @@ public interface TeacherExtendDao {
 
     public void batchAddTeacherExtend(List<TeacherExtend> teacherExtends);
 
-    public List<Map> getExperimentByTeacherId(TeacherExtend teacherExtend);
+    public List<Map> getExperimentByTeacherId(QueryParams queryParams);
 }

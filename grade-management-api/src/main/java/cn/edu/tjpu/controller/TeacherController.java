@@ -1,16 +1,13 @@
 package cn.edu.tjpu.controller;
 
-import cn.edu.tjpu.base.BaseController;
-import cn.edu.tjpu.base.Page;
-import cn.edu.tjpu.base.ResponseCode;
-import cn.edu.tjpu.base.ResponseData;
+import cn.edu.tjpu.base.*;
 import cn.edu.tjpu.model.Teacher;
-import cn.edu.tjpu.model.TeacherExtend;
 import cn.edu.tjpu.service.TeacherExtendService;
 import cn.edu.tjpu.service.TeacherService;
 import cn.edu.tjpu.utils.JWTUtils;
 import cn.edu.tjpu.utils.MenuUtils;
 import cn.edu.tjpu.utils.RandomGUID;
+import cn.edu.tjpu.utils.SemesterUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,11 +100,11 @@ public class TeacherController extends BaseController {
         String auth = getAuth();
         if (JWTUtils.checkToken(auth).isStatus()) {
             String teacherId = JWTUtils.parser(auth);
-            System.out.println(teacherId);
-            TeacherExtend teacherExtend = new TeacherExtend();
-            teacherExtend.setTeacherId(teacherId);
-            teacherExtend.setCourseId(courseId);
-            List<Map> resuliList = teacherExtendService.getExperimentByTeacherId(teacherExtend);
+            QueryParams queryParams = new QueryParams();
+            queryParams.put("courseId",courseId);
+            queryParams.put("teacherId",teacherId);
+            queryParams.put("semesterNumber", SemesterUtils.getSemesterNumber());
+            List<Map> resuliList = teacherExtendService.getExperimentByTeacherId(queryParams);
             return ResponseData.ok(resuliList);
         }
         return ResponseData.fail("token不正确");
