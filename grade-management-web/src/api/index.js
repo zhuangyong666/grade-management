@@ -1,7 +1,7 @@
 import Axios from '../libs/AxiosPlugin'
 
 // 接口地址
-const BASE_PATH = process.env.API_URL
+const BASE_PATH = window.g.baseUrl;
 
 // 教师登录
 export const login = params => { return Axios.post(`${BASE_PATH}/teacher/login`, params).then(res => res.data); };
@@ -31,7 +31,7 @@ export const getStudentList = params => { return Axios.post(`${BASE_PATH}/studen
 export const updateStudent = params => { return Axios.post(`${BASE_PATH}/student/update`, params).then(res => res.data); };
 
 //获取所有班级列表
-export const getAllClazzList = () => { return Axios.get(`${BASE_PATH}/clazz/list`).then(res => res.data); };
+export const getClazzList = params => { return Axios.post(`${BASE_PATH}/clazz/list`,params).then(res => res.data); };
 
 // 获取评分等级列表
 export const getScoreLevelList = params => { return Axios.post(`${BASE_PATH}/scoreLevel/list`, params).then(res => res.data); };
@@ -48,8 +48,8 @@ export const deleteScoreLevel = params => { return Axios.post(`${BASE_PATH}/scor
 //获取所有学期
 export const getAllSemester = () => { return Axios.get(`${BASE_PATH}/semester/getAllSemester`).then(res => res.data); };
 
-//获取所有课程
-export const getAllCourse = () => { return Axios.get(`${BASE_PATH}/course/getAllCourse`).then(res => res.data); };
+//获取课程
+export const getCourse = params => { return Axios.post(`${BASE_PATH}/course/getCourse`,params).then(res => res.data); };
 
 //修改学生实验评分
 export const updateStudentScore = params => { return Axios.post(`${BASE_PATH}/student/updateStudentScore`, params).then(res => res.data); };
