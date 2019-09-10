@@ -11,14 +11,14 @@
         select * from clazz
     </select>
     <select id="getClazzByTeacherId" parameterType="cn.edu.tjpu.base.QueryParams" resultType="clazz">
-        select distinct t.* from teacher_extend s left join  clazz t on s.clazzId = t.id left join semester r on s.semesterId = r.id
+        select distinct t.* from teacher_extend s left join  clazz t on s.clazzId = t.id
         left join experiment a on s.experimentId = a.id
         where 1=1
         <if test="teacherId!='admin'">
             and s.teacherId = #{teacherId}
         </if>
-        <if test="semesterNumber!=null and semesterNumber!=''">
-            and r.number = #{semesterNumber}
+        <if test="semesterId!=null and semesterId!=''">
+            and s.semesterId = #{semesterId}
         </if>
         <if test="courseId!=null and courseId!=''">
             and s.courseId = #{courseId}

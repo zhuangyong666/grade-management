@@ -76,6 +76,7 @@ public class StudentServiceImpl implements StudentService {
                 for (Score scoreBean : scoreList) {
                     if (scoreBean.getName().contains(experimentName) && scoreBean.getExperimentalFlag() == 1) {
                         studentInfo.put("experimentEScore", scoreBean.getScore());
+                        studentInfo.put("remarks", scoreBean.getRemarks());
                     } else if (scoreBean.getName().contains(experimentName) && scoreBean.getExperimentalFlag() == 0) {
                         studentInfo.put("experimentUScore", scoreBean.getScore());
                     }
@@ -152,13 +153,16 @@ public class StudentServiceImpl implements StudentService {
         }
         String experimentEScore = (String) queryParams.get("experimentEScore");
         String experimentUScore = (String) queryParams.get("experimentUScore");
+        String remarks = (String) queryParams.get("remarks");
         List<Score> scoreList = JSONObject.parseArray(score, Score.class);
         if (scoreList != null && scoreList.size() != 0) {
             for (Score scoreBean : scoreList) {
                 if (scoreBean.getName().contains(experimentName) && scoreBean.getExperimentalFlag() == 1) {
                     scoreBean.setScore(experimentEScore);
+                    scoreBean.setRemarks(remarks);
                 } else if (scoreBean.getName().contains(experimentName) && scoreBean.getExperimentalFlag() == 0) {
                     scoreBean.setScore(experimentUScore);
+                    scoreBean.setRemarks(remarks);
                 }
             }
             String newScoreStr = JSONObject.toJSONString(scoreList);

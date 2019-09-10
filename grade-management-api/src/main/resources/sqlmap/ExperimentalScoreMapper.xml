@@ -40,4 +40,20 @@
           where t.courseId=#{courseId} and r.number = #{semesterNumber} and s.clazzId=#{clazzId}
           limit 1,1
     </select>
+    <delete id="deleteStudentExperimentalScore" parameterType="cn.edu.tjpu.base.QueryParams">
+        DELETE
+            FROM
+                experimental_score
+            WHERE
+                semesterId = #{semesterId}
+            AND courseId = #{courseId}
+            AND studentid IN (
+                SELECT
+                    s.id
+                FROM
+                    student s
+                WHERE
+                    clazzId = #{clazzId}
+            )
+    </delete>
 </mapper>

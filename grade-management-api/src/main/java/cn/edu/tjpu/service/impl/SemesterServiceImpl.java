@@ -24,6 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @ClassName: SemesterServiceImpl
@@ -272,7 +274,8 @@ public class SemesterServiceImpl implements SemesterService {
 
             List<Student> students = new ArrayList<>();
             List<String> studentNumbers = new ArrayList<>();
-
+            String excelDefaultEScore = excelUtils.getValue(row6.getCell(2));
+            String excelDefaultUScore = excelUtils.getValue(row7.getCell(2));
             for (int i = 9; sheet.getRow(i) != null; i++) {
                 Row rowi = sheet.getRow(i);
                 String studentId = RandomGUID.generatorGUID();
@@ -303,14 +306,22 @@ public class SemesterServiceImpl implements SemesterService {
                                 score.setName(experimentalName);
                                 if (uFormula.contains(startCell)) {
                                     if (scoreStr == null) {
-                                        scoreStr = defaultUScore;
+                                        if (excelDefaultUScore != null) {
+                                            scoreStr = excelDefaultUScore;
+                                        }else{
+                                            scoreStr = defaultUScore;
+                                        }
                                     }
                                     score.setScore(scoreStr);
                                     score.setExperimentalFlag(0);
                                     scoreList.add(score);
                                 } else if (eFormula.contains(startCell)) {
                                     if (scoreStr == null) {
-                                        scoreStr = defaultEScore;
+                                        if (excelDefaultEScore != null) {
+                                            scoreStr = excelDefaultEScore;
+                                        }else{
+                                            scoreStr = defaultEScore;
+                                        }
                                     }
                                     score.setScore(scoreStr);
                                     score.setExperimentalFlag(1);
@@ -408,27 +419,25 @@ public class SemesterServiceImpl implements SemesterService {
             List<Score> scoreList = JSONObject.parseArray(scoreJson, Score.class);
             String eFormula = (String) studentInfo.get("eFormula");
             String uFormula = (String) studentInfo.get("uFormula");
-            List<String> eFormulaList = toScoreList(eFormula);
-            List<String> uFormulaList = null;
+            Map<String, String> eFormulaMap = toScoreMap(eFormula);
+            Map<String, String> uFormulaMap = null;
             if (uFormula != null) {
-                uFormulaList = toScoreList(uFormula);
+                uFormulaMap = toScoreMap(uFormula);
             }
             int cellNum = 4;
-            int e = 0;
-            int u = 0;
+            String startCell = "E";
             for (int j = 0; j < scoreList.size(); j++) {
                 Score scoreBean = scoreList.get(j);
                 String name = scoreBean.getName();
                 Integer experimentalFlag = scoreBean.getExperimentalFlag();
                 double d = 0;
                 if (experimentalFlag == 1) {
-                    d = Double.valueOf(eFormulaList.get(e)) * 1000 / 10;
-                    e++;
+                    d = Double.valueOf(eFormulaMap.get(startCell)) * 1000 / 10;
                 } else {
-                    d = Double.valueOf(uFormulaList.get(u)) * 1000 / 10;
-                    u++;
+                    d = Double.valueOf(uFormulaMap.get(startCell)) * 1000 / 10;
                 }
                 excelUtils.setCell(j + 4, name + "(" + d + "%)");
+                startCell = ((char) (startCell.toCharArray()[0] + 1)) + "";
                 cellNum = j + 5;
             }
             excelUtils.setCell(cellNum, "实验总分");
@@ -490,16 +499,25 @@ public class SemesterServiceImpl implements SemesterService {
         return semesterDao.getAllSemester();
     }
 
-    public List toScoreList(String eFormula) {
-        String[] eFormulaArr = eFormula.split("[A-Z]");
-        List<String> eFormulaList = new LinkedList<>();
-        for (String s : eFormulaArr) {
-            s = s.replaceAll("[*,/,+,-]", "");
-            if (!s.trim().equals("")) {
-                eFormulaList.add(s);
+    public Map toScoreMap(String formula) {
+        Pattern letterPattern = Pattern.compile("[(0(\\.\\d{1,2})?)|1 */+-]");
+        Matcher letterMatcher = letterPattern.matcher(formula);
+        String letterResult = letterMatcher.replaceAll("");
+        Pattern numberPattern = Pattern.compile("[A-Z */+-[(][)]]");
+        Matcher numberMatcher = numberPattern.matcher(formula);
+        String numberResult = numberMatcher.replaceAll("-");
+        String[] numberStrArr = numberResult.split("[-]{1,10}");
+        List<String> numberList = new LinkedList<>();
+        for (int i = 0; i < numberStrArr.length; i++) {
+            if (!"".equals(numberStrArr[i])) {
+                numberList.add(numberStrArr[i]);
             }
         }
-        return eFormulaList;
+        char[] letterCharArr = letterResult.toCharArray();
+        Map<String, String> resultMap = new HashMap<>();
+        for (int i = 0; i < letterCharArr.length; i++) {
+            resultMap.put(letterCharArr[i] + "", numberList.get(i));
+        }
+        return resultMap;
     }
-
 }

@@ -7,7 +7,6 @@ import cn.edu.tjpu.service.TeacherService;
 import cn.edu.tjpu.utils.JWTUtils;
 import cn.edu.tjpu.utils.MenuUtils;
 import cn.edu.tjpu.utils.RandomGUID;
-import cn.edu.tjpu.utils.SemesterUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,15 +94,12 @@ public class TeacherController extends BaseController {
         return ResponseData.ok("");
     }
 
-    @GetMapping("getExperiment")
-    public ResponseData getExperiment(Long courseId) {
+    @PostMapping("getExperiment")
+    public ResponseData getExperiment(@RequestBody QueryParams queryParams) {
         String auth = getAuth();
         if (JWTUtils.checkToken(auth).isStatus()) {
             String teacherId = JWTUtils.parser(auth);
-            QueryParams queryParams = new QueryParams();
-            queryParams.put("courseId",courseId);
             queryParams.put("teacherId",teacherId);
-            queryParams.put("semesterNumber", SemesterUtils.getSemesterNumber());
             List<Map> resuliList = teacherExtendService.getExperimentByTeacherId(queryParams);
             return ResponseData.ok(resuliList);
         }

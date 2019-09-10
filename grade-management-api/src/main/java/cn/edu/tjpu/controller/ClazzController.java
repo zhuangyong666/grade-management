@@ -24,7 +24,7 @@ public class ClazzController extends BaseController {
     private ClazzService clazzService;
 
     @GetMapping("list")
-    public ResponseData getAllClazz() {
+    public ResponseData getAllClazz() throws Exception{
         List<Clazz> resutList = clazzService.getAllClazz();
         return ResponseData.ok(resutList);
     }
@@ -39,5 +39,10 @@ public class ClazzController extends BaseController {
             return ResponseData.ok(clazzList);
         }
         return ResponseData.failByParam("您还没有登录");
+    }
+    @PostMapping("delete")
+    public ResponseData deleteClass(@RequestBody QueryParams queryParams){
+       clazzService.deleteScoreByClass(queryParams);
+       return ResponseData.ok("success");
     }
 }

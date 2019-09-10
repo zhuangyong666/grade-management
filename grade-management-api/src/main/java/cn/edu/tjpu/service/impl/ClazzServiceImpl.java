@@ -2,6 +2,7 @@ package cn.edu.tjpu.service.impl;
 
 import cn.edu.tjpu.base.QueryParams;
 import cn.edu.tjpu.dao.ClazzDao;
+import cn.edu.tjpu.dao.ExperimentalScoreDao;
 import cn.edu.tjpu.model.Clazz;
 import cn.edu.tjpu.service.ClazzService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import java.util.List;
 public class ClazzServiceImpl implements ClazzService {
     @Autowired
     private ClazzDao clazzDao;
+    @Autowired
+    private ExperimentalScoreDao experimentalScoreDao;
     @Override
     public List<Clazz> getAllClazz() {
         return clazzDao.getAllClazz();
@@ -29,5 +32,10 @@ public class ClazzServiceImpl implements ClazzService {
     @Override
     public List<Clazz> getClazzByTeacherId(QueryParams queryParams) {
         return clazzDao.getClazzByTeacherId(queryParams);
+    }
+
+    @Override
+    public void deleteScoreByClass(QueryParams queryParams) {
+        experimentalScoreDao.deleteStudentExperimentalScore(queryParams);
     }
 }

@@ -13,6 +13,7 @@ public class Score implements Serializable {
     private String score;
     private Integer experimentalFlag;
     private String remarks;
+
     public String getName() {
         return name;
     }
@@ -38,7 +39,7 @@ public class Score implements Serializable {
     }
 
     public String getRemarks() {
-        return remarks;
+        return remarks == null ? "" : remarks;
     }
 
     public void setRemarks(String remarks) {

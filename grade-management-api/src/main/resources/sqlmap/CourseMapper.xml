@@ -8,13 +8,13 @@
         select * from course where name=#{name}
     </select>
     <select id="getCoursesByTeacherId" resultType="course" parameterType="cn.edu.tjpu.base.QueryParams">
-        select DISTINCT t.* from teacher_extend s left join course t on s.courseId = t.id left join semester r on s.semesterId = r.id
+        select DISTINCT t.* from teacher_extend s left join course t on s.courseId = t.id
         where 1=1
         <if test="teacherId!=null and teacherId!='admin'">
             and s.teacherId=#{teacherId}
         </if>
-        <if test="semesterNumber!=null and semesterNumber!=''">
-            and r.number=#{semesterNumber}
+        <if test="semesterId!=null and semesterId!=''">
+            and s.semesterId=#{semesterId}
         </if>
     </select>
     <select id="getAllCourse" resultType="course">

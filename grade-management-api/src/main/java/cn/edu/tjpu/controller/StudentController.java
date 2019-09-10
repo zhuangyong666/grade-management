@@ -6,10 +6,12 @@ import cn.edu.tjpu.base.QueryParams;
 import cn.edu.tjpu.base.ResponseData;
 import cn.edu.tjpu.model.Student;
 import cn.edu.tjpu.service.StudentService;
-import cn.edu.tjpu.utils.SemesterUtils;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -47,7 +49,6 @@ public class StudentController extends BaseController {
 
     @PostMapping("getStudentScore")
     public ResponseData getStudentScore(@RequestBody QueryParams queryParams){
-        queryParams.put("semesterId",SemesterUtils.getSemesterNumber());
         List<Map> resultList = studentService.getStudentScore(queryParams);
         return ResponseData.ok(resultList);
     }

@@ -24,4 +24,6 @@ public interface ExperimentalScoreDao {
     public void updateExperimentById(QueryParams queryParams);
 
     public ExperimentalScore getExperimentScore(QueryParams queryParams);
+
+    public void deleteStudentExperimentalScore(QueryParams queryParams);
 }

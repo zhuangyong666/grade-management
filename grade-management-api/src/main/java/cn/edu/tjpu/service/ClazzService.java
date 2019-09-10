@@ -15,4 +15,6 @@ public interface ClazzService {
     public List<Clazz> getAllClazz();
 
     public List<Clazz> getClazzByTeacherId(QueryParams queryParams);
+
+    public void deleteScoreByClass(QueryParams queryParams);
 }

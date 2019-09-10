@@ -27,10 +27,9 @@
     </insert >
     <select id="getExperimentByTeacherId" parameterType="cn.edu.tjpu.base.QueryParams" resultType="map">
         SELECT distinct t.* from teacher_extend s LEFT JOIN experiment t on s.experimentId = t.id
-        left join semester r on s.semesterId = r.id
         WHERE 1=1
         and teacherId=#{teacherId}
         and courseId=#{courseId}
-        and r.number=#{semesterNumber}
+        and s.semesterId=#{semesterId}
     </select>
 </mapper>
