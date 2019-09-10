@@ -59,3 +59,9 @@ export const exportStudentScore = params => { return Axios.post(`${BASE_PATH}/fi
 
 //删除学生信息
 export const deleteStudentInfo = params => { return Axios.post(`${BASE_PATH}/student/delete`, params).then(res => res.data); };
+
+//获取所有班级
+export const getAllClazz = () => { return Axios.get(`${BASE_PATH}/clazz/list`).then(res => res.data); };
+
+//
+export const deleteScoreByClass = params => { return Axios.post(`${BASE_PATH}/clazz/delete`, params).then(res => res.data); };

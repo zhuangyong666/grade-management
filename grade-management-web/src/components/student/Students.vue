@@ -5,9 +5,9 @@
         <el-select v-model="formInline.semesterId" @change="semesterChanage">
           <el-option
             v-for="item in semesterOptions"
-            :key="item.number"
+            :key="item.id"
             :label="item.number"
-            :value="item.number"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -41,9 +41,9 @@
       </el-form-item>-->
 
       <el-form-item>
-        <el-button type="primary" @click="onSubmit">查询</el-button>
-        <!-- <el-button @click="resetForm('formInline')">重置</el-button> -->
-        <el-button @click="exportFile">导出</el-button>
+        <el-button type="primary" @click="onSubmit" size="small">查询</el-button>
+        <el-button @click="deleteForm(formInline)" size="small">删除</el-button>
+        <el-button @click="exportFile" size="small">导出</el-button>
       </el-form-item>
     </el-form>
 
@@ -73,6 +73,7 @@
               :key="score.score"
             >
               <span>{{ score.score }}</span>
+              <div v-if="index%2==0 && score.remarks">备注 {{score.remarks}}</div>
             </el-form-item>
             <el-form-item label="实验总成绩">
               <span>{{ props.row.eTotalScore }}</span>
@@ -130,9 +131,9 @@
           </el-select>
         </el-form-item>
         <el-form-item label="班级" :label-width="formLabelWidth">
-          <el-select v-model="form.clazzName">
+          <el-select v-model="form.clazzId">
             <el-option
-              v-for="item in clazzOptions"
+              v-for="item in allClazzOptions"
               :key="item.id"
               :label="item.name"
               :value="item.id"
@@ -175,9 +176,9 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="备注" :label-width="formLabelWidth">
+        <el-form-item label="备注" :label-width="formLabelWidth">
           <el-input type="textarea" :rows="2" placeholder="请输入备注" v-model="scoreForm.remarks"></el-input>
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="scoreFormVisible = false">取 消</el-button>
@@ -220,7 +221,9 @@ import {
   getCourse,
   updateStudentScore,
   exportStudentScore,
-  deleteStudentInfo
+  deleteStudentInfo,
+  getAllClazz,
+  deleteScoreByClass
 } from "../../api";
 
 export default {
@@ -277,7 +280,8 @@ export default {
         experimentEScore: "", //实验成绩
         experimentUScore: "" //平时成绩
       },
-      uFlag: false
+      uFlag: false,
+      allClazzOptions:[]
     };
   },
   mounted() {
@@ -290,7 +294,7 @@ export default {
       getAllSemester().then(
         function(result) {
           this.semesterOptions = result.data;
-          this.formInline.semesterId = result.data[0].number;
+          this.formInline.semesterId = result.data[0].id;
         }.bind(this)
       );
     },
@@ -321,13 +325,18 @@ export default {
           }.bind(this)
         );
     },
-    //重置
-    resetForm(formName) {
-      this.formInline = {
-        name: "",
-        number: "",
-        clazzName: ""
-      };
+    //删除
+    deleteForm(params) {
+      deleteScoreByClass(params)
+        .then(
+          function(result) {
+            this.$message({
+              message: "删除成功",
+              type: "success"
+            });
+            this.loadData();
+          }.bind(this)
+        );
     },
     //查询
     onSubmit() {
@@ -344,6 +353,11 @@ export default {
     },
     //打开编辑窗口
     showEditDialog(row) {
+      getAllClazz().then(
+        function(result) {
+          this.allClazzOptions = result.data;
+        }.bind(this)
+      );
       var data = this.tableData[row];
       this.form.id = data.id;
       this.form.name = data.name;
@@ -546,7 +560,7 @@ export default {
         );
     },
     semesterChanage() {
-      var params = { semesterNumber: this.formInline.semesterId };
+      var params = { semesterId: this.formInline.semesterId };
       getCourse(params).then(
         function(result) {
           this.courseOptions = result.data;
